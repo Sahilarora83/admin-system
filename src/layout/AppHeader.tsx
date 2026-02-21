@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Link } from "react-router";
 import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import NotificationDropdown from "../components/header/NotificationDropdown";
@@ -41,7 +40,7 @@ const AppHeader: React.FC = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
+    <header className="sticky top-0 flex w-full bg-white/80 backdrop-blur-md border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900/80 lg:border-b">
       <div className="flex flex-col items-center justify-between grow lg:flex-row lg:px-6">
         <div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
           <button
@@ -83,11 +82,19 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
-          <Link to="/" className="lg:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
+            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12v4.7c0 4.67-3.13 8.89-7 10.02-3.87-1.13-7-5.35-7-10.02v-4.7l7-3.12z" /></svg>
             <span className="text-lg font-bold text-gray-900 dark:text-white">
-              Sahil Admin
+              RTOShield
             </span>
-          </Link>
+          </div>
+
+          <div className="hidden lg:flex items-center gap-2 ml-4">
+            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm0 2.18l6 2.25v4.66c0 3.99-2.6 7.62-6 8.65-3.4-.1-6-4.66-6-8.65V6.43l6-2.25zm-1 9.82h2v-2h-2v2zm0-4h2v-4h-2v4z" /></svg>
+            <span className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              RTOShield
+            </span>
+          </div>
 
           <button
             onClick={toggleApplicationMenu}

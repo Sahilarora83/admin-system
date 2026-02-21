@@ -9,7 +9,7 @@ export default function NotFound() {
         title="React.js 404 Dashboard | Sahil Admin "
         description="This is React.js 404 Dashboard page for Sahil Admin "
       />
-      <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
+      <div className="relative flex flex-col items-center justify-center  p-6 overflow-hidden z-1">
         <GridShape />
         <div className="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
           <h1 className="mb-8 font-bold text-gray-800 text-title-md dark:text-white/90 xl:text-title-2xl">

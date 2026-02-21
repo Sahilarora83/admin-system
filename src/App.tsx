@@ -1,23 +1,30 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
-import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
-import NotFound from "./pages/OtherPage/NotFound";
-import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
-import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
+import { lazy, Suspense } from "react";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
+
+// Eagerly load the main dashboard (first paint)
 import Home from "./pages/Dashboard/Home";
+
+// Lazy-load all other routes (code splitting)
+const NotFound = lazy(() => import("./pages/OtherPage/NotFound"));
+const UserProfiles = lazy(() => import("./pages/UserProfiles"));
+const Metrics = lazy(() => import("./pages/Metrics"));
+const Trends = lazy(() => import("./pages/Trends"));
+const Couriers = lazy(() => import("./pages/Couriers"));
+const Frauds = lazy(() => import("./pages/Frauds"));
+const Delivery = lazy(() => import("./pages/Delivery"));
+const Cashflow = lazy(() => import("./pages/Cashflow"));
+const Settings = lazy(() => import("./pages/Settings"));
+
+// Minimal skeleton shown while a lazy chunk loads
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -29,40 +36,21 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
 
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
-
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
-
-            {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
-
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
-
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
+            {/* Lazy sidebar pages */}
+            <Route path="/metrics" element={<Suspense fallback={<PageLoader />}><Metrics /></Suspense>} />
+            <Route path="/trends" element={<Suspense fallback={<PageLoader />}><Trends /></Suspense>} />
+            <Route path="/couriers" element={<Suspense fallback={<PageLoader />}><Couriers /></Suspense>} />
+            <Route path="/frauds" element={<Suspense fallback={<PageLoader />}><Frauds /></Suspense>} />
+            <Route path="/delivery" element={<Suspense fallback={<PageLoader />}><Delivery /></Suspense>} />
+            <Route path="/cashflow" element={<Suspense fallback={<PageLoader />}><Cashflow /></Suspense>} />
+            <Route path="/settings" element={<Suspense fallback={<PageLoader />}><Settings /></Suspense>} />
+            <Route path="/profile" element={<Suspense fallback={<PageLoader />}><UserProfiles /></Suspense>} />
           </Route>
 
-          {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-
           {/* Fallback Route */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
         </Routes>
       </Router>
     </>
   );
 }
-
-
