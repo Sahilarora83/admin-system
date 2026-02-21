@@ -1,47 +1,92 @@
-# Sahil Admin - Modern React Admin Dashboard
+# RTOShield — Modern E-commerce & RTO Analytics Dashboard
 
-A high-performance, modern admin dashboard built with **React**, **TypeScript**, and **Tailwind CSS v4**. This dashboard provides a clean and professional interface for managing data-driven applications.
+[![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite)](https://vitejs.dev/)
 
-## Features
+**RTOShield** is a premium, high-performance admin dashboard designed specifically for e-commerce businesses to track, analyze, and mitigate **RTO (Return to Origin)** risks. Built with the latest tech stack, it offers a seamless, responsive experience across all devices.
 
-- **Modern UI/UX**: Built with Tailwind CSS v4 for a sleek, responsive design.
-- **Dark Mode**: Native support for dark mode with seamless transitions.
-- **Data Visualization**: Integrated with ApexCharts for beautiful, interactive data displays.
-- **Predefined Components**: Includes tables, forms, calendars, and UI elements.
-- **Responsive Layout**: Fully functional across mobile, tablet, and desktop devices.
-- **Authentication**: Pre-built Sign In and Sign Up pages.
+---
 
-## Tech Stack
+## 🚀 Key Features
 
-- **React 19**
-- **TypeScript**
-- **Tailwind CSS v4**
-- **Vite**
-- **ApexCharts**
+- **Responsive Design**: Fully optimized for Mobile (320px+), Tablet, and Desktop.
+- **RTO Analytics**: Specialized charts for RTO Trends, Net Recovery, and Courier Performance.
+- **Risk Management**: Geographic risk overview with an interactive Pincode Risk map.
+- **Fraud Detection**: Real-time monitoring of high-risk customers and orders.
+- **Premium UI**: Crafted with **Tailwind CSS v4** featuring Glassmorphism and smooth micro-animations.
+- **Dark Mode**: Native, system-aware dark mode support.
+- **Optimized Performance**: Lazy loading, code splitting, and memoized components for < 1s interactions.
 
-## Getting Started
+## 🛠️ Tech Stack
+
+- **Core**: React 19, TypeScript
+- **Styling**: Tailwind CSS v4 (PostCSS)
+- **Visuals**: ApexCharts, React-jVectorMap (Custom India Map)
+- **Icons**: Custom SVG icons + Lucide-style iconography
+- **Build Tool**: Vite (Lightning-fast HMR)
+- **Deployment**: Production-ready build with chunk optimization
+
+---
+
+## 📦 Getting Started
 
 ### Prerequisites
-
-- Node.js 18.x or later
+- **Node.js**: v18.x or higher
+- **npm**: v9.x or higher
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the Repo**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Sahilarora83/admin-system.git
+   cd admin-system
    ```
 
-2. Install dependencies:
+2. **Install Dependencies**
    ```bash
    npm install
    ```
 
-3. Start the development server:
+3. **Start Development**
    ```bash
    npm run dev
    ```
 
-## License
+4. **Build for Production**
+   ```bash
+   npm run build
+   ```
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+---
+
+## 📂 Project Structure
+
+```text
+src/
+├── components/     # Specialized UI & Analytics components
+│   ├── ecommerce/  # RTO-specific widgets (Trends, Metrics, Maps)
+│   ├── common/     # Reusable UI elements (Tabs, Buttons, Modals)
+│   └── header/     # Interactive header components
+├── layout/         # Core Page Shell & Sidebar logic
+├── pages/          # Full page views with route-based code splitting
+└── context/        # Global state (Sidebar, Theme)
+```
+
+---
+
+## 🎨 Dashboard Preview
+
+- **Home**: centralized view of RTO Metrics, Trends, and Courier performance.
+- **Trends**: Deep dive into historical data.
+- **Risk Map**: Interactive geographic analysis of high-risk pincodes.
+- **Couriers**: Detailed breakdown of delivery partner performance.
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+Built with ❤️ by [Sahil Arora](https://github.com/Sahilarora83)
