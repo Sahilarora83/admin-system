@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function DeliveryTable() {
     const [data, setData] = useState<any[]>([]);
 
     useEffect(() => {
-        fetch('/api/delivery-table')
-            .then(res => res.json())
+        apiFetch('/api/delivery-table')
             .then(d => setData(d))
             .catch(err => console.error("Failed to fetch delivery table", err));
     }, []);

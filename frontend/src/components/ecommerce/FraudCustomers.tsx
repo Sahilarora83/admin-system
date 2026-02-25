@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function FraudCustomers() {
     const [customers, setCustomers] = useState<any[]>([]);
 
     useEffect(() => {
-        fetch('/api/fraud-customers')
-            .then(res => res.json())
+        apiFetch('/api/fraud-customers')
             .then(data => setCustomers(data))
             .catch(err => console.error("Failed to load fraud customers", err));
     }, []);

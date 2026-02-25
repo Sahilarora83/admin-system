@@ -3,14 +3,14 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router";
 import Avatar from "../ui/avatar/Avatar";
+import { apiFetch } from "../../utils/api";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/profile')
-      .then(res => res.json())
+    apiFetch('/api/profile')
       .then(data => setProfile(data))
       .catch(err => console.error(err));
   }, []);

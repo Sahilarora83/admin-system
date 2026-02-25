@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function CashflowInsights() {
     const [data, setData] = useState<any>(null);
 
     useEffect(() => {
-        fetch('/api/cashflow-insights')
-            .then(res => res.json())
+        apiFetch('/api/cashflow-insights')
             .then(d => setData(d))
             .catch(err => console.error("Failed to load cashflow insights", err));
     }, []);

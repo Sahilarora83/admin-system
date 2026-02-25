@@ -2,6 +2,8 @@ import { VectorMap } from "@react-jvectormap/core";
 import { inMill } from "@react-jvectormap/india";
 import { useMemo, memo, useState, useEffect } from "react";
 
+import { apiFetch } from "../../utils/api";
+
 const PincodeRisk = memo(function PincodeRisk() {
     // Generate explicit color values for all states
     const mapData = useMemo(() => {
@@ -38,8 +40,7 @@ const PincodeRisk = memo(function PincodeRisk() {
 
     useEffect(() => {
         setMounted(true);
-        fetch('/api/pincode-risk')
-            .then(res => res.json())
+        apiFetch('/api/pincode-risk')
             .then(d => setPincodeData(d))
             .catch(err => console.error("Failed to fetch pincodes", err));
     }, []);

@@ -1,13 +1,13 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function NetRecoveryChart() {
     const [data, setData] = useState<any>(null);
 
     useEffect(() => {
-        fetch('/api/net-recovery')
-            .then(res => res.json())
+        apiFetch('/api/net-recovery')
             .then(d => setData(d))
             .catch(err => console.error("Failed to fetch net recovery data", err));
     }, []);

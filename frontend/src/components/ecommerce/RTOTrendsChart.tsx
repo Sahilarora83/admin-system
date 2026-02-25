@@ -1,13 +1,13 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { memo, useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 const RTOTrendsChart = memo(function RTOTrendsChart() {
     const [data, setData] = useState<any>(null);
 
     useEffect(() => {
-        fetch('/api/rto-trends')
-            .then(res => res.json())
+        apiFetch('/api/rto-trends')
             .then(d => setData(d))
             .catch(err => console.error("Failed to fetch rto trends", err));
     }, []);

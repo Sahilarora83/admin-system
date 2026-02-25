@@ -3,6 +3,7 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useNavigate } from "react-router";
 import Avatar from "../ui/avatar/Avatar";
+import { apiFetch } from "../../utils/api";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,8 +12,7 @@ export default function NotificationDropdown() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/notifications')
-      .then(res => res.json())
+    apiFetch('/api/notifications')
       .then(data => setNotifications(data))
       .catch(err => console.error("Failed to load notifications", err));
   }, []);

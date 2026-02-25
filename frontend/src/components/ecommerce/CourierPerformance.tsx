@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function CourierPerformance() {
     const [metrics, setMetrics] = useState<any[]>([]);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
-        fetch('/api/courier-performance')
-            .then(res => res.json())
+        apiFetch('/api/courier-performance')
             .then(data => setMetrics(data))
             .catch(err => console.error("Failed to load courier performance", err));
     }, []);
