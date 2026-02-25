@@ -8,6 +8,8 @@ import FraudCustomers from "../../components/ecommerce/FraudCustomers";
 import DeliverySpeedRadar from "../../components/ecommerce/DeliverySpeedRadar";
 import CashflowInsights from "../../components/ecommerce/CashflowInsights";
 import DeliveryTable from "../../components/ecommerce/DeliveryTable";
+import CourierFunnel from "../../components/ecommerce/CourierFunnel";
+import DemographicCard from "../../components/ecommerce/DemographicCard";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { apiFetch } from "../../utils/api";
@@ -65,6 +67,7 @@ export default function Home() {
           <div className="xl:col-span-8 flex flex-col gap-4 md:gap-6">
             <RTOMetrics />
             <RTOTrendsChart />
+            <CourierFunnel />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <PincodeRisk />
@@ -87,6 +90,7 @@ export default function Home() {
               </div>
             </div>
             <CashflowInsights />
+            <DemographicCard />
           </div>
 
         </div>
