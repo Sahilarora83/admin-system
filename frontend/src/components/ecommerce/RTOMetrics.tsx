@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function RTOMetrics() {
     const [metrics, setMetrics] = useState<any[]>([]);
 
     useEffect(() => {
-        fetch('/api/rto-metrics')
-            .then(res => res.json())
+        apiFetch('/api/rto-metrics')
             .then(data => setMetrics(data))
             .catch(err => console.error("Failed to load metrics", err));
     }, []);

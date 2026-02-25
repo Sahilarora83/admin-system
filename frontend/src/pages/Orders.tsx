@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { apiFetch } from "../utils/api";
 import PageMeta from "../components/common/PageMeta";
 import DispatchModal from "../components/ecommerce/DispatchModal";
 
@@ -103,11 +104,10 @@ export default function Orders() {
                 ...(statusFilter && { status: statusFilter }),
                 ...(search && { search }),
             });
-            const res = await fetch(`/api/orders?${params}`);
-            const data: OrdersResponse = await res.json();
-            setOrders(data.data ?? []);
-            setTotal(data.total ?? 0);
-            setTotalPages(data.total_pages ?? 1);
+            const res = await apiFetch(`/api/orders?${params}`);
+            setOrders(res.data ?? []);
+            setTotal(res.total ?? 0);
+            setTotalPages(res.total_pages ?? 1);
         } catch {
             setOrders([]);
         } finally {
@@ -132,8 +132,7 @@ export default function Orders() {
 
     // ── Fetch Shopify connection ──────────────────────────────────────────────
     useEffect(() => {
-        fetch("/api/shopify/connection")
-            .then(r => r.json())
+        apiFetch("/api/shopify/connection")
             .then(setConnection)
             .catch(() => { });
     }, []);

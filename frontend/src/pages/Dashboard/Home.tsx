@@ -10,13 +10,13 @@ import CashflowInsights from "../../components/ecommerce/CashflowInsights";
 import DeliveryTable from "../../components/ecommerce/DeliveryTable";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { apiFetch } from "../../utils/api";
 
 export default function Home() {
   const [backendStatus, setBackendStatus] = useState<string>("Checking...");
 
   useEffect(() => {
-    fetch('/api/dashboard-stats')
-      .then(res => res.json())
+    apiFetch('/api/dashboard-stats')
       .then(() => setBackendStatus("Connected ✓"))
       .catch(() => setBackendStatus("Offline"));
   }, []);
@@ -33,10 +33,10 @@ export default function Home() {
         {/* Header Actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div className={`text-sm font-medium px-3 py-1.5 rounded-lg inline-block ${backendStatus.includes("✓")
-              ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20"
-              : backendStatus === "Checking..."
-                ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
-                : "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20"
+            ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20"
+            : backendStatus === "Checking..."
+              ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
+              : "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20"
             }`}>
             Backend: {backendStatus}
           </div>
