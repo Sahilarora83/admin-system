@@ -15,9 +15,15 @@ export default function FraudCustomers() {
             <div className="px-4 py-3 sm:px-5 flex justify-between items-center border-b border-gray-50 dark:border-gray-800/50">
                 <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white/90">Fraud &amp; Risk Customers</h3>
                 <button
-                    onClick={() => {
-                        const allBlocked = customers.every(c => c.blocked);
-                        setCustomers(customers.map(c => ({ ...c, blocked: !allBlocked })));
+                    onClick={async () => {
+                        try {
+                            const res = await apiFetch('/api/fraud/bulk-block', { method: 'POST' });
+                            if (res.success) {
+                                setCustomers(customers.map(c => ({ ...c, blocked: true })));
+                            }
+                        } catch (err) {
+                            console.error("Bulk block failed", err);
+                        }
                     }}
                     className="text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 border px-2.5 py-1.5 rounded-lg shadow-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 flex items-center gap-1 shrink-0"
                 >

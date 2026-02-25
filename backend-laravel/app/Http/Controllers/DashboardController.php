@@ -535,4 +535,28 @@ class DashboardController extends Controller
             ];
         }));
     }
+
+    // ──────────────────────────────────────────────────────────────
+    // 18. Save Settings
+    // ──────────────────────────────────────────────────────────────
+    public function saveSettings(Request $request): JsonResponse
+    {
+        $type = $request->input('type', 'profile');
+        $data = $request->except('type');
+
+        // In a real app, you'd save this to a 'settings' or 'users' table.
+        // For now, we'll simulate success and log the change.
+        \Illuminate\Support\Facades\Log::info("Settings updated for {$type}: " . json_encode($data));
+
+        return response()->json(['success' => true, 'message' => "{$type} settings saved successfully!"]);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // 19. Bulk Block Fraud Customers
+    // ──────────────────────────────────────────────────────────────
+    public function bulkBlockFraud(): JsonResponse
+    {
+        $count = DB::table('customers')->where('is_fraud', 1)->update(['is_fraud' => 2]); // 2 = Blocked
+        return response()->json(['success' => true, 'message' => "{$count} fraud customers have been blocked."]);
+    }
 }

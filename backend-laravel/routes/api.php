@@ -24,6 +24,8 @@ Route::get('/delivery-table', [DashboardController::class, 'deliveryTable']);
 Route::get('/notifications', [DashboardController::class, 'notifications']);
 Route::get('/bot-query', [DashboardController::class, 'botQuery']);
 Route::get('/demographic-stats', [DashboardController::class, 'demographicStats']);
+Route::post('/settings/save', [DashboardController::class, 'saveSettings']);
+Route::post('/fraud/bulk-block', [DashboardController::class, 'bulkBlockFraud']);
 
 // ── Shopify Import ─────────────────────────────────────────────────────────
 Route::post('/shopify/import', [ShopifyImportController::class, 'upload']);
