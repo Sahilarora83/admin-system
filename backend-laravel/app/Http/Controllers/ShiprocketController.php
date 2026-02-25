@@ -273,13 +273,7 @@ class ShiprocketController extends Controller
             ->pluck('courier_name');
 
         if ($couriers->isEmpty()) {
-            // Return demo funnel data
-            return response()->json([
-                ['courier' => 'Delhivery', 'pending' => 34, 'in_transit' => 120, 'out_for_delivery' => 45, 'delivered' => 380, 'rto' => 67],
-                ['courier' => 'Blue Dart', 'pending' => 12, 'in_transit' => 88, 'out_for_delivery' => 31, 'delivered' => 290, 'rto' => 29],
-                ['courier' => 'Xpressbees', 'pending' => 28, 'in_transit' => 95, 'out_for_delivery' => 28, 'delivered' => 210, 'rto' => 55],
-                ['courier' => 'Ecom Express', 'pending' => 19, 'in_transit' => 74, 'out_for_delivery' => 22, 'delivered' => 175, 'rto' => 41],
-            ]);
+            return response()->json([]);
         }
 
         return response()->json($couriers->map(function ($courier) use ($funnelStatuses) {
