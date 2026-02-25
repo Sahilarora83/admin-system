@@ -81,37 +81,28 @@ export default function HelpBot() {
         setIsTyping(false);
     };
 
-    const handleSend = (text: string) => {
+    const handleSend = async (text: string) => {
         if (!text.trim()) return;
         setMessages(prev => [...prev, { id: Date.now(), type: "user", text }]);
         setUserInput("");
         setIsTyping(true);
 
-        const input = text.toLowerCase();
-        setTimeout(() => {
-            let botMsg: Message = { id: Date.now() + 1, type: "bot", text: "", status: "neutral" };
-
-            if (input.includes("ship") || input.includes("dispatch")) {
-                botMsg.text = "You can handle all your shipping on the **Orders** page. Would you like me to take you there?";
-                botMsg.actions = [{ label: "Go to Orders", type: "nav", payload: "/ecommerce/orders", variant: "primary" }];
-            } else if (input.includes("rto") || input.includes("return")) {
-                botMsg.text = "We've had about ₹14,200 worth of RTOs this week, mostly from Haryana. \n\nI can stop accepting COD orders from that area for a while if you'd like.";
-                botMsg.actions = [{ label: "Block COD for that zone", type: "command", payload: "block_zone", variant: "danger" }];
-            } else if (input.includes("sync") || input.includes("update")) {
-                handleAction({ label: "Sync now", type: "api", payload: "/api/shipments/sync" });
-                return;
-            } else {
-                botMsg.text = "I'm not quite sure about that, but I can help you with **Shipping**, **Risk Control**, or **General Stats**. What do you need?";
-                botMsg.actions = [
-                    { label: "Sync tracking", type: "api", payload: "/api/shipments/sync", variant: "secondary" },
-                    { label: "Check revenue", type: "api", payload: "/api/dashboard-stats", variant: "secondary" },
-                    { label: "Scan for risk", type: "command", payload: "check_risk", variant: "danger" }
-                ];
-            }
-
-            setMessages(prev => [...prev, botMsg]);
+        try {
+            const botMsg = await apiFetch(`/api/bot-query?message=${encodeURIComponent(text)}`);
+            setMessages(prev => [...prev, { id: Date.now() + 1, type: "bot", ...botMsg }]);
+        } catch (err) {
+            setMessages(prev => [...prev, {
+                id: Date.now() + 1,
+                type: "bot",
+                text: "I'm having trouble fetching live data right now, but I can still help you with navigation.",
+                actions: [
+                    { label: "Go to Dashboard", type: "nav", payload: "/", variant: "primary" },
+                    { label: "View Metrics", type: "nav", payload: "/ecommerce/metrics", variant: "secondary" }
+                ]
+            }]);
+        } finally {
             setIsTyping(false);
-        }, 800);
+        }
     };
 
     return (

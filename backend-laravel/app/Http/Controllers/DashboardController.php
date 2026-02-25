@@ -35,10 +35,10 @@ class DashboardController extends Controller
         // Fallback to demo values when DB is empty
         if ($totalOrders === 0) {
             return response()->json([
-                ['title' => "Total Orders", 'value' => "3,450", 'gradient' => "from-purple-100 to-transparent", 'lineColor' => "text-purple-400"],
-                ['title' => "COD Orders", 'value' => "65%", 'gradient' => "from-blue-100 to-transparent", 'lineColor' => "text-blue-400"],
-                ['title' => "RTO Rate", 'value' => "24.8%", 'gradient' => "from-purple-100 to-transparent", 'lineColor' => "text-purple-400"],
-                ['title' => "RTO Loss", 'value' => "₹3.24L", 'gradient' => "from-indigo-100 to-transparent", 'lineColor' => "text-indigo-400"],
+                ['title' => "Total Orders", 'value' => "0", 'gradient' => "from-purple-100 to-transparent", 'lineColor' => "text-purple-400"],
+                ['title' => "COD Orders", 'value' => "0%", 'gradient' => "from-blue-100 to-transparent", 'lineColor' => "text-blue-400"],
+                ['title' => "RTO Rate", 'value' => "0%", 'gradient' => "from-purple-100 to-transparent", 'lineColor' => "text-purple-400"],
+                ['title' => "RTO Loss", 'value' => "₹0", 'gradient' => "from-indigo-100 to-transparent", 'lineColor' => "text-indigo-400"],
             ]);
         }
 
@@ -73,11 +73,7 @@ class DashboardController extends Controller
             ->get();
 
         if ($customers->isEmpty() && !DB::table('orders')->exists()) {
-            return response()->json([
-                ['name' => "Ajay Sharma", 'id' => "21333-22322", 'phone' => "9878542210", 'risk' => "High", 'riskColor' => "text-red-500 bg-red-50 dark:bg-red-900/20 dark:text-red-400", 'avatar' => "/images/user/user-01.jpg", 'blocked' => true],
-                ['name' => "Priya Malhotra", 'id' => "47943-37221", 'phone' => "8766432109", 'risk' => "Medium", 'riskColor' => "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400", 'avatar' => "/images/user/user-02.jpg", 'blocked' => false],
-                ['name' => "Rahul Verma", 'id' => "65087-77908", 'phone' => "9988770655", 'risk' => "High", 'riskColor' => "text-red-500 bg-red-50 dark:bg-red-900/20 dark:text-red-400", 'avatar' => "/images/user/user-03.jpg", 'blocked' => false],
-            ]);
+            return response()->json([]);
         }
 
         return response()->json($customers->map(function ($c) {
@@ -111,11 +107,7 @@ class DashboardController extends Controller
             ->get();
 
         if ($couriers->isEmpty() && !DB::table('orders')->exists()) {
-            return response()->json([
-                ['name' => "Delhivery", 'value' => "28%", 'stroke' => "text-purple-400", 'fillColor' => "text-purple-400", 'path' => "M0,35 C15,35 20,15 35,15 C50,15 55,40 70,40 C85,40 90,20 100,20 L100,50 L0,50 Z", 'line' => "M0,35 C15,35 20,15 35,15 C50,15 55,40 70,40 C85,40 90,20 100,20"],
-                ['name' => "Blue Dart", 'value' => "17%", 'stroke' => "text-blue-400", 'fillColor' => "text-blue-400", 'path' => "M0,20 C15,20 25,40 40,40 C55,40 65,15 80,15 C90,15 95,25 100,25 L100,50 L0,50 Z", 'line' => "M0,20 C15,20 25,40 40,40 C55,40 65,15 80,15 C90,15 95,25 100,25"],
-                ['name' => "Xpressbees", 'value' => "28%", 'stroke' => "text-purple-400", 'fillColor' => "text-purple-400", 'path' => "M0,30 C15,30 20,10 35,10 C50,10 60,40 75,40 C85,40 95,25 100,25 L100,50 L0,50 Z", 'line' => "M0,30 C15,30 20,10 35,10 C50,10 60,40 75,40 C85,40 95,25 100,25"],
-            ]);
+            return response()->json([]);
         }
 
         $colors = ['text-purple-400', 'text-blue-400', 'text-emerald-400', 'text-orange-400', 'text-pink-400'];
@@ -298,8 +290,8 @@ class DashboardController extends Controller
             : '65%';
 
         return response()->json([
-            'rto' => $hasData ? $rtoData : [1.10, 2.00, 1.40, 1.25, 1.80, 2.40, 2.80, 2.90],
-            'cod' => $hasData ? $codData : [1.20, 1.50, 1.30, 1.50, 1.60, 1.90, 2.20, 2.10],
+            'rto' => $hasData ? $rtoData : [0, 0, 0, 0, 0, 0, 0, 0],
+            'cod' => $hasData ? $codData : [0, 0, 0, 0, 0, 0, 0, 0],
             'categories' => $hasData ? $months : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
             'stats' => [
                 ['label' => 'Weekly Revenue', 'value' => $weeklyRev > 0 ? '₹' . number_format($weeklyRev) : '₹4.7L', 'color' => 'indigo'],
@@ -331,8 +323,8 @@ class DashboardController extends Controller
         $hasData = DB::table('orders')->where('status', 'delivered')->exists();
 
         return response()->json([
-            'current' => $hasData ? $current : [22500, 24000, 27500, 28000, 30000],
-            'target' => $hasData ? $target : [28000, 27000, 27500, 29000, 28500],
+            'current' => $hasData ? $current : [0, 0, 0, 0, 0],
+            'target' => $hasData ? $target : [0, 0, 0, 0, 0],
             'categories' => $hasData ? $cats : ["Jan", "Apr", "Jun", "Sep", "Dec"],
         ]);
     }
@@ -375,8 +367,8 @@ class DashboardController extends Controller
         $hasData = DB::table('orders')->exists();
 
         return response()->json([
-            'sales' => $hasData ? $sales : [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
-            'revenue' => $hasData ? $revenue : [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+            'sales' => $hasData ? $sales : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'revenue' => $hasData ? $revenue : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'categories' => $cats,
         ]);
     }
@@ -398,7 +390,7 @@ class DashboardController extends Controller
         $hasData = DB::table('orders')->exists();
 
         return response()->json([
-            'sales' => $hasData ? $sales : [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+            'sales' => $hasData ? $sales : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'categories' => $cats,
         ]);
     }
@@ -446,8 +438,8 @@ class DashboardController extends Controller
         $hasData = DB::table('orders')->exists();
 
         return response()->json([
-            'historical' => $hasData ? $historical : [42000, 50000, 47000, 62000, null, null],
-            'predictive' => $hasData ? $predictive : [null, null, null, 62000, 78000, 95000],
+            'historical' => $hasData ? $historical : [0, 0, 0, 0, null, null],
+            'predictive' => $hasData ? $predictive : [null, null, null, 0, 0, 0],
         ]);
     }
 
@@ -469,12 +461,7 @@ class DashboardController extends Controller
             ->pluck('courier_name');
 
         if ($couriers->isEmpty() && !DB::table('orders')->exists()) {
-            return response()->json([
-                ["name" => "Delhivery", "north" => "24%", "south" => "19%", "west" => "19%", "east" => "38%", "bgNorth" => "bg-blue-300", "bgSouth" => "bg-orange-200", "bgWest" => "bg-orange-200", "bgEast" => "bg-red-300"],
-                ["name" => "Blue Dart", "north" => "31%", "south" => "11%", "west" => "18%", "east" => "24%", "bgNorth" => "bg-blue-400", "bgSouth" => "bg-orange-100", "bgWest" => "bg-orange-100", "bgEast" => "bg-red-200"],
-                ["name" => "Ecom Express", "north" => "33%", "south" => "23%", "west" => "23%", "east" => "35%", "bgNorth" => "bg-purple-300", "bgSouth" => "bg-orange-300", "bgWest" => "bg-orange-300", "bgEast" => "bg-red-300"],
-                ["name" => "Xpressbees", "north" => "22%", "south" => "17%", "west" => "27%", "east" => "30%", "bgNorth" => "bg-blue-300", "bgSouth" => "bg-orange-200", "bgWest" => "bg-orange-200", "bgEast" => "bg-red-300"],
-            ]);
+            return response()->json([]);
         }
 
         $bgColor = function (float $pct): string {
@@ -536,5 +523,66 @@ class DashboardController extends Controller
             ["id" => 3, "name" => "RTOShield", "action" => "Courier RTO spike", "project" => "Delhivery > 30%", "time" => "15 min ago", "avatar" => "/images/user/user-04.jpg", "status" => "online"],
             ["id" => 4, "name" => "RTOShield", "action" => "COD order delivered", "project" => "Order #OD1803", "time" => "1 hr ago", "avatar" => "/images/user/user-05.jpg", "status" => "offline"],
         ]);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // 16. Bot Query (Shield Assistant)
+    // ──────────────────────────────────────────────────────────────
+    public function botQuery(Request $request): JsonResponse
+    {
+        $input = strtolower($request->input('message', ''));
+        $botMsg = ['text' => "", 'status' => 'neutral', 'actions' => []];
+
+        if (str_contains($input, 'ship') || str_contains($input, 'order') || str_contains($input, 'dispatch')) {
+            $count = DB::table('orders')->count();
+            $botMsg['text'] = "I've found **{$count} total orders** in your system. You can manage them all on the **Orders** page.";
+            $botMsg['actions'][] = ['label' => "Go to Orders", 'type' => "nav", 'payload' => "/ecommerce/orders", 'variant' => "primary"];
+        } elseif (str_contains($input, 'rto') || str_contains($input, 'return') || str_contains($input, 'risk')) {
+            $rtoCount = DB::table('orders')->where('status', 'rto')->count();
+            $riskyPincodes = DB::table('pincodes')->where('risk_level', 'high')->count();
+            $botMsg['text'] = "Your system currently has **{$rtoCount} RTO orders**. Also, I've flagged **{$riskyPincodes} high-risk pincodes** that need your attention.";
+            $botMsg['status'] = 'warning';
+            $botMsg['actions'][] = ['label' => "View Pincode Risk", 'type' => "nav", 'payload' => "/ecommerce/metrics", 'variant' => "danger"];
+        } elseif (str_contains($input, 'revenue') || str_contains($input, 'sale') || str_contains($input, 'stat')) {
+            $revenue = DB::table('orders')->where('status', 'delivered')->sum('amount');
+            $botMsg['text'] = "Your total delivered revenue is **₹" . number_format($revenue) . "**. Would you like to see the detailed sales charts?";
+            $botMsg['actions'][] = ['label' => "Check Dashboard", 'type' => "nav", 'payload' => "/", 'variant' => "success"];
+        } elseif (str_contains($input, 'fraud') || str_contains($input, 'customer') || str_contains($input, 'block')) {
+            $fraudCount = DB::table('customers')->where('is_fraud', 1)->count();
+            $botMsg['text'] = "I've identified **{$fraudCount} potentially fraudulent customers**. Most of them have multiple RTO attempts.";
+            $botMsg['actions'][] = ['label' => "Review Fraud List", 'type' => "nav", 'payload' => "/frauds", 'variant' => "danger"];
+        } else {
+            $botMsg['text'] = "I'm Shield Assistant! I can help you find **Real-time Stats**, analyze **RTO Risks**, or track **Shipping Performance**. What would you like to know?";
+            $botMsg['actions'][] = ['label' => "Check Stats", 'type' => "api", 'payload' => "/api/dashboard-stats", 'variant' => "secondary"];
+        }
+
+        return response()->json($botMsg);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // 17. Demographics (State-wise)
+    // ──────────────────────────────────────────────────────────────
+    public function demographicStats(): JsonResponse
+    {
+        $stats = DB::table('orders')
+            ->select('state', DB::raw('count(*) as count'))
+            ->whereNotNull('state')
+            ->where('state', '!=', '')
+            ->groupBy('state')
+            ->orderByDesc('count')
+            ->take(5)
+            ->get();
+
+        $total = DB::table('orders')->count();
+
+        return response()->json($stats->map(function ($s) use ($total) {
+            $pct = $total > 0 ? round(($s->count / $total) * 100, 1) : 0;
+            return [
+                'name' => $s->state,
+                'count' => $s->count,
+                'pct' => $pct,
+                'image' => '/images/country/country-05.svg'
+            ];
+        }));
     }
 }

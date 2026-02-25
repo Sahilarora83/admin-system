@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -5,8 +6,17 @@ import {
   GroupIcon,
 } from "../../icons";
 import Badge from "../ui/badge/Badge";
+import { apiFetch } from "../../utils/api";
 
 export default function EcommerceMetrics() {
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    apiFetch("/api/dashboard-stats")
+      .then(setStats)
+      .catch(() => { });
+  }, []);
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
       {/* <!-- Metric Item Start --> */}
@@ -21,12 +31,12 @@ export default function EcommerceMetrics() {
               Customers
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              3,782
+              {stats?.total_customers?.toLocaleString() || "0"}
             </h4>
           </div>
           <Badge color="success">
             <ArrowUpIcon />
-            11.01%
+            {stats?.customer_growth || "0%"}
           </Badge>
         </div>
       </div>
@@ -43,13 +53,13 @@ export default function EcommerceMetrics() {
               Orders
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+              {stats?.total_orders?.toLocaleString() || "0"}
             </h4>
           </div>
 
-          <Badge color="error">
-            <ArrowDownIcon />
-            9.05%
+          <Badge color={stats?.order_trend === 'up' ? "success" : "error"}>
+            {stats?.order_trend === 'up' ? <ArrowUpIcon /> : <ArrowDownIcon />}
+            {stats?.order_growth || "0%"}
           </Badge>
         </div>
       </div>
