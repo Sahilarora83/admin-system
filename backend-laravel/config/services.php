@@ -30,4 +30,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'shiprocket' => [
+        'email' => env('SHIPROCKET_EMAIL'),
+        'password' => env('SHIPROCKET_PASSWORD'),
+        'webhook_secret' => env('SHIPROCKET_WEBHOOK_SECRET'),
+        'pickup_pincode' => env('SHIPROCKET_PICKUP_PINCODE', '110001'),
+        'pickup_location' => env('SHIPROCKET_PICKUP_LOCATION', 'Primary'),
+    ],
+
 ];

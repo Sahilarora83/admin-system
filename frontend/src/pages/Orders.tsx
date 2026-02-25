@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import PageMeta from "../components/common/PageMeta";
+import DispatchModal from "../components/ecommerce/DispatchModal";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -19,7 +20,7 @@ interface Order {
     pincode: string;
     pincode_risk: string;
     ordered_at: string;
-    line_items: string;
+    line_items: any;
 }
 
 interface OrdersResponse {
@@ -47,11 +48,7 @@ const STATUS_BADGE: Record<string, string> = {
     out_for_delivery: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
 };
 
-const RISK_BADGE: Record<string, string> = {
-    High: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
-    Medium: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
-    Low: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
-};
+
 
 function fmt(n: number) {
     return "₹" + n.toLocaleString("en-IN");
@@ -90,6 +87,12 @@ export default function Orders() {
     const [connecting, setConnecting] = useState(false);
     const [connection, setConnection] = useState<ShopifyConnection | null>(null);
 
+    // Dispatch modal state
+    const [dispatchOrder, setDispatchOrder] = useState<Order | null>(null);
+
+    // COD Risk scores cache { order_id: { risk, score, action } }
+    const [codRisks, setCodRisks] = useState<Record<number, { risk: string; score: number; label: string }>>({});
+
     // ── Fetch orders ──────────────────────────────────────────────────────────
     const fetchOrders = useCallback(async () => {
         setLoading(true);
@@ -113,6 +116,19 @@ export default function Orders() {
     }, [page, statusFilter, search]);
 
     useEffect(() => { fetchOrders(); }, [fetchOrders]);
+
+    // Fetch COD risk scores for COD orders on this page
+    useEffect(() => {
+        const codOrderIds = orders.filter(o => o.payment_method === 'COD' && o.status === 'pending').map(o => o.id);
+        if (codOrderIds.length === 0) return;
+        fetch('/api/cod-risk/bulk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: codOrderIds }),
+        }).then(r => r.json()).then(data => {
+            setCodRisks(prev => ({ ...prev, ...data }));
+        }).catch(() => { });
+    }, [orders]);
 
     // ── Fetch Shopify connection ──────────────────────────────────────────────
     useEffect(() => {
@@ -249,8 +265,8 @@ export default function Orders() {
                     {/* Import message */}
                     {importMsg && (
                         <div className={`px-4 py-3 rounded-lg text-sm font-medium ${importMsg.type === "success"
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800"
-                                : "bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800"
+                            : "bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800"
                             }`}>
                             {importMsg.text}
                         </div>
@@ -403,15 +419,17 @@ export default function Orders() {
                                         <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">Customer</th>
                                         <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">Amount</th>
                                         <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">Payment</th>
+                                        <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">COD Risk</th>
                                         <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">Status</th>
-                                        <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">Risk</th>
                                         <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">Location</th>
                                         <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">Date</th>
+                                        <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                                     {orders.map(order => {
                                         const lineItems = (() => {
+                                            if (typeof order.line_items === 'object') return order.line_items;
                                             try { return JSON.parse(order.line_items || "[]"); } catch { return []; }
                                         })();
                                         return (
@@ -433,21 +451,39 @@ export default function Orders() {
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${order.payment_method === "COD"
-                                                            ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
-                                                            : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                                        ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
+                                                        : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                                                         }`}>
                                                         {order.payment_method}
                                                     </span>
                                                 </td>
+                                                {/* COD Risk Score */}
+                                                <td className="px-4 py-3">
+                                                    {order.payment_method === 'COD' && codRisks[order.id] ? (
+                                                        <div>
+                                                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${codRisks[order.id].risk === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                                                                codRisks[order.id].risk === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                                    'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                                                }`}>
+                                                                {codRisks[order.id].score}% risk
+                                                            </span>
+                                                            {codRisks[order.id].risk === 'high' && (
+                                                                <div className="text-xs text-red-500 dark:text-red-400 mt-0.5">⚠ Block COD</div>
+                                                            )}
+                                                            {codRisks[order.id].risk === 'medium' && (
+                                                                <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-0.5">↑ Suggest Prepaid</div>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500">
+                                                            {order.payment_method === 'COD' ? 'Calculating...' : '—'}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                {/* Status */}
                                                 <td className="px-4 py-3">
                                                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize ${STATUS_BADGE[order.status] ?? STATUS_BADGE.pending}`}>
                                                         {order.status.replace("_", " ")}
-                                                    </span>
-                                                </td>
-                                                <td className="px-4 py-3">
-                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${RISK_BADGE[order.shopify_risk_level] ?? RISK_BADGE.Low
-                                                        }`}>
-                                                        {order.shopify_risk_level || "Low"}
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3">
@@ -456,6 +492,19 @@ export default function Orders() {
                                                 </td>
                                                 <td className="px-4 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap text-xs">
                                                     {timeAgo(order.ordered_at)}
+                                                </td>
+                                                {/* Dispatch */}
+                                                <td className="px-4 py-3">
+                                                    {order.status === 'pending' ? (
+                                                        <button
+                                                            onClick={() => setDispatchOrder(order)}
+                                                            className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-lg transition-colors whitespace-nowrap"
+                                                        >
+                                                            🚚 Dispatch
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500 capitalize">{order.status.replace('_', ' ')}</span>
+                                                    )}
                                                 </td>
                                             </tr>
                                         );
@@ -492,6 +541,19 @@ export default function Orders() {
                 </div>
 
             </div>
+
+            {/* Dispatch Modal */}
+            {dispatchOrder && (
+                <DispatchModal
+                    order={dispatchOrder}
+                    onClose={() => setDispatchOrder(null)}
+                    onSuccess={(awb, courierName) => {
+                        setImportMsg({ type: 'success', text: `✅ Dispatched via ${courierName} — AWB: ${awb}` });
+                        setDispatchOrder(null);
+                        fetchOrders();
+                    }}
+                />
+            )}
         </>
     );
 }

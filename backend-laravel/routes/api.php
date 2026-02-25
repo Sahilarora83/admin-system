@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ShopifyImportController;
+use App\Http\Controllers\ShiprocketController;
 use Illuminate\Support\Facades\Route;
 
 // ── Dashboard ──────────────────────────────────────────────────────────────
@@ -29,3 +30,21 @@ Route::get('/shopify/connection', [ShopifyImportController::class, 'getConnectio
 
 // ── Orders ─────────────────────────────────────────────────────────────────
 Route::get('/orders', [ShopifyImportController::class, 'orders']);
+
+// ── Dispatch (Shiprocket 2-step) ───────────────────────────────────────────
+Route::post('/dispatch/initiate', [ShiprocketController::class, 'initiateDispatch']);
+Route::post('/dispatch/confirm', [ShiprocketController::class, 'confirmDispatch']);
+
+// ── Shipments ──────────────────────────────────────────────────────────────
+Route::get('/shipments', [ShiprocketController::class, 'listShipments']);
+Route::get('/shipments/sync', [ShiprocketController::class, 'syncTracking']);
+
+// ── Shiprocket Webhook (configure this URL in Shiprocket panel) ────────────
+Route::post('/webhook/shiprocket', [ShiprocketController::class, 'handleWebhook']);
+
+// ── Courier Funnel ─────────────────────────────────────────────────────────
+Route::get('/courier-funnel', [ShiprocketController::class, 'courierFunnel']);
+
+// ── COD Risk Scoring ───────────────────────────────────────────────────────
+Route::get('/cod-risk/{orderId}', [ShiprocketController::class, 'codRiskScore']);
+Route::post('/cod-risk/bulk', [ShiprocketController::class, 'codRiskBulk']);

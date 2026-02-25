@@ -105,7 +105,7 @@ class DashboardController extends Controller
     {
         $couriers = DB::table('orders')
             ->whereNotNull('courier_name')
-            ->select('courier_name', DB::raw('COUNT(*) as total'), DB::raw("SUM(status='rto') as rto_count"))
+            ->select('courier_name', DB::raw('COUNT(*) as total'), DB::raw("SUM(CASE WHEN status='rto' THEN 1 ELSE 0 END) as rto_count"))
             ->groupBy('courier_name')
             ->having('total', '>', 0)
             ->get();
@@ -145,7 +145,7 @@ class DashboardController extends Controller
                 'pincodes.pincode',
                 'pincodes.risk_level',
                 DB::raw('COUNT(*) as total'),
-                DB::raw("SUM(orders.status = 'rto') as rto_count")
+                DB::raw("SUM(CASE WHEN orders.status = 'rto' THEN 1 ELSE 0 END) as rto_count")
             )
             ->groupBy('pincodes.id', 'pincodes.pincode', 'pincodes.risk_level')
             ->orderBy('rto_count', 'desc')

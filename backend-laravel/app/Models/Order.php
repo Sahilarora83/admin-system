@@ -30,4 +30,8 @@ class Order extends Model
     {
         return $this->hasMany(ShipmentEvent::class);
     }
+    public function shipment()
+    {
+        return $this->hasOne(Shipment::class);
+    }
 }
