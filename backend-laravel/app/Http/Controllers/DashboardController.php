@@ -110,7 +110,7 @@ class DashboardController extends Controller
             ->having('total', '>', 0)
             ->get();
 
-        if ($couriers->isEmpty()) {
+        if ($couriers->isEmpty() && !DB::table('orders')->exists()) {
             return response()->json([
                 ['name' => "Delhivery", 'value' => "28%", 'stroke' => "text-purple-400", 'fillColor' => "text-purple-400", 'path' => "M0,35 C15,35 20,15 35,15 C50,15 55,40 70,40 C85,40 90,20 100,20 L100,50 L0,50 Z", 'line' => "M0,35 C15,35 20,15 35,15 C50,15 55,40 70,40 C85,40 90,20 100,20"],
                 ['name' => "Blue Dart", 'value' => "17%", 'stroke' => "text-blue-400", 'fillColor' => "text-blue-400", 'path' => "M0,20 C15,20 25,40 40,40 C55,40 65,15 80,15 C90,15 95,25 100,25 L100,50 L0,50 Z", 'line' => "M0,20 C15,20 25,40 40,40 C55,40 65,15 80,15 C90,15 95,25 100,25"],
@@ -187,9 +187,42 @@ class DashboardController extends Controller
     // ──────────────────────────────────────────────────────────────
     public function deliverySpeed(): JsonResponse
     {
+        $hasData = DB::table('shipments')->exists();
+        if (!$hasData) {
+            return response()->json([
+                'current' => [80, 50, 30, 40, 100],
+                'target' => [70, 60, 40, 50, 90],
+            ]);
+        }
+
+        // ── Calculate metrics for Radar Chart axes: ["Speed", "On-Time", "Returns", "Damage", "Support"] ────
+        $avgDays = DB::table('shipments')
+            ->whereNotNull('delivered_at')
+            ->where('shipped_at', '>=', now()->subDays(7))
+            ->select(DB::raw('AVG(DATEDIFF(delivered_at, shipped_at)) as avg'))
+            ->value('avg') ?: 5;
+
+        // Speed Score (Lower is better, so we invert it: 5 days = 100, 10 days = 50)
+        $speed = max(0, min(100, 100 - ($avgDays - 3) * 10));
+
+        // On-Time (Estimated 5 days)
+        $onTime = DB::table('shipments')
+            ->whereNotNull('delivered_at')
+            ->select(DB::raw("SUM(CASE WHEN DATEDIFF(delivered_at, shipped_at) <= 5 THEN 1 ELSE 0 END) * 100 / COUNT(*) as score"))
+            ->value('score') ?: 0;
+
+        // Returns (RTO Rate Inverse)
+        $total = DB::table('orders')->count();
+        $rto = DB::table('orders')->where('status', 'rto')->count();
+        $returnsScore = $total > 0 ? max(0, 100 - ($rto / $total * 100)) : 100;
+
+        // Damage & Support (Mocked from risk scores since we don't track damage yet)
+        $damage = 95;
+        $support = 88;
+
         return response()->json([
-            'current' => [80, 50, 30, 40, 100],
-            'target' => [20, 30, 40, 80, 50],
+            'current' => [round($speed), round($onTime), round($returnsScore), $damage, $support],
+            'target' => [90, 85, 95, 98, 95],
         ]);
     }
 
@@ -209,9 +242,8 @@ class DashboardController extends Controller
             ->sum('amount');
 
         $totalCOD = DB::table('orders')->where('payment_method', 'COD')->sum('amount');
-
-        $rtoHigherBy = $totalCOD > 0 ? round(($codRTO / $totalCOD) * 100) . '%' : '34%';
-        $amountSaved = number_format($codDelivered - $codRTO);
+        $rtoHigherBy = $totalCOD > 0 ? round(($codRTO / $totalCOD) * 100) . '%' : '0%';
+        $amountSaved = number_format($codDelivered);
 
         return response()->json([
             'zoneCode' => "COD-Zone-A",
@@ -242,7 +274,7 @@ class DashboardController extends Controller
             $codData[] = $total > 0 ? round(($cod / $total) * 100, 1) : 0;
         }
 
-        $hasData = array_sum($rtoData) > 0;
+        $hasData = DB::table('orders')->exists();
 
         // Weekly revenue from orders
         $weeklyRev = DB::table('orders')
@@ -290,7 +322,7 @@ class DashboardController extends Controller
             $target[] = (int) ($rev * 1.2); // 20% more than actual = target
         }
 
-        $hasData = array_sum($current) > 0;
+        $hasData = DB::table('orders')->where('status', 'delivered')->exists();
 
         return response()->json([
             'current' => $hasData ? $current : [22500, 24000, 27500, 28000, 30000],
@@ -334,7 +366,7 @@ class DashboardController extends Controller
             $revenue[] = (int) ($rev / 1000); // in thousands
         }
 
-        $hasData = array_sum($sales) > 0;
+        $hasData = DB::table('orders')->exists();
 
         return response()->json([
             'sales' => $hasData ? $sales : [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
@@ -357,7 +389,7 @@ class DashboardController extends Controller
             $sales[] = $cnt;
         }
 
-        $hasData = array_sum($sales) > 0;
+        $hasData = DB::table('orders')->exists();
 
         return response()->json([
             'sales' => $hasData ? $sales : [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
@@ -405,7 +437,7 @@ class DashboardController extends Controller
         $predictive = [null, null, null, end($historical), (int) ($avg * 1.25), (int) ($avg * 1.5)];
         array_push($historical, null, null);
 
-        $hasData = array_sum(array_filter($historical)) > 0;
+        $hasData = DB::table('orders')->exists();
 
         return response()->json([
             'historical' => $hasData ? $historical : [42000, 50000, 47000, 62000, null, null],
@@ -430,7 +462,7 @@ class DashboardController extends Controller
             ->distinct()
             ->pluck('courier_name');
 
-        if ($couriers->isEmpty()) {
+        if ($couriers->isEmpty() && !DB::table('orders')->exists()) {
             return response()->json([
                 ["name" => "Delhivery", "north" => "24%", "south" => "19%", "west" => "19%", "east" => "38%", "bgNorth" => "bg-blue-300", "bgSouth" => "bg-orange-200", "bgWest" => "bg-orange-200", "bgEast" => "bg-red-300"],
                 ["name" => "Blue Dart", "north" => "31%", "south" => "11%", "west" => "18%", "east" => "24%", "bgNorth" => "bg-blue-400", "bgSouth" => "bg-orange-100", "bgWest" => "bg-orange-100", "bgEast" => "bg-red-200"],
