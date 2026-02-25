@@ -72,7 +72,7 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        if ($customers->isEmpty()) {
+        if ($customers->isEmpty() && !DB::table('orders')->exists()) {
             return response()->json([
                 ['name' => "Ajay Sharma", 'id' => "21333-22322", 'phone' => "9878542210", 'risk' => "High", 'riskColor' => "text-red-500 bg-red-50 dark:bg-red-900/20 dark:text-red-400", 'avatar' => "/images/user/user-01.jpg", 'blocked' => true],
                 ['name' => "Priya Malhotra", 'id' => "47943-37221", 'phone' => "8766432109", 'risk' => "Medium", 'riskColor' => "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400", 'avatar' => "/images/user/user-02.jpg", 'blocked' => false],
@@ -173,12 +173,18 @@ class DashboardController extends Controller
             ->get();
 
         return response()->json([
-            'highRiskCount' => $highRiskCount ?: 148,
+            'highRiskCount' => $highRiskCount,
             'pincodes' => $risky,
-            'users' => [
-                ['name' => "Ajay Sharma", 'id' => "57985779090", 'blocked' => true, 'avatar' => "/images/user/user-01.jpg"],
-                ['name' => "Rahul Verma", 'id' => "97882272066", 'blocked' => false, 'avatar' => "/images/user/user-03.jpg"],
-            ],
+            'users' => DB::table('customers')
+                ->where('is_fraud', 1)
+                ->take(3)
+                ->get()
+                ->map(fn($u) => [
+                    'name' => $u->name,
+                    'id' => (string) $u->id,
+                    'blocked' => (bool) $u->is_blocked,
+                    'avatar' => "/images/user/user-01.jpg"
+                ]),
         ]);
     }
 
@@ -246,9 +252,9 @@ class DashboardController extends Controller
         $amountSaved = number_format($codDelivered);
 
         return response()->json([
-            'zoneCode' => "COD-Zone-A",
+            'zoneCode' => "COD-Analysis",
             'rtoHigherBy' => $rtoHigherBy,
-            'amountSaved' => $amountSaved ?: '1,25,000',
+            'amountSaved' => $amountSaved,
         ]);
     }
 
