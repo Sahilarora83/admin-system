@@ -10,6 +10,10 @@ class Order extends Model
     use HasFactory;
     protected $guarded = [];
 
+    protected $casts = [
+        'line_items' => 'array',
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Customer::class);
@@ -21,5 +25,9 @@ class Order extends Model
     public function pincode()
     {
         return $this->belongsTo(Pincode::class);
+    }
+    public function events()
+    {
+        return $this->hasMany(ShipmentEvent::class);
     }
 }

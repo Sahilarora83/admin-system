@@ -28,6 +28,11 @@ const navItems: NavItem[] = [
     path: "/",
   },
   {
+    icon: <PageIcon />,
+    name: "Orders",
+    path: "/orders",
+  },
+  {
     icon: <BoxCubeIcon />,
     name: "Metrics",
     path: "/metrics",
@@ -48,7 +53,7 @@ const navItems: NavItem[] = [
     path: "/frauds",
   },
   {
-    icon: <PageIcon />,
+    icon: <BoxCubeIcon />,
     name: "Delivery Speed",
     path: "/delivery",
   },

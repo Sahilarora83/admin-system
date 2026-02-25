@@ -17,6 +17,7 @@ const Delivery = lazy(() => import("./pages/Delivery"));
 const Cashflow = lazy(() => import("./pages/Cashflow"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Notifications = lazy(() => import("./pages/Notifications"));
+const Orders = lazy(() => import("./pages/Orders"));
 
 // Minimal skeleton shown while a lazy chunk loads
 function PageLoader() {
@@ -47,6 +48,7 @@ export default function App() {
             <Route path="/settings" element={<Suspense fallback={<PageLoader />}><Settings /></Suspense>} />
             <Route path="/profile" element={<Suspense fallback={<PageLoader />}><UserProfiles /></Suspense>} />
             <Route path="/notifications" element={<Suspense fallback={<PageLoader />}><Notifications /></Suspense>} />
+            <Route path="/orders" element={<Suspense fallback={<PageLoader />}><Orders /></Suspense>} />
           </Route>
 
           {/* Fallback Route */}

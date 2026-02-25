@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ShopifyImportController;
 use Illuminate\Support\Facades\Route;
 
+// ── Dashboard ──────────────────────────────────────────────────────────────
 Route::get('/dashboard-stats', [DashboardController::class, 'stats']);
 Route::get('/rto-metrics', [DashboardController::class, 'rtoMetrics']);
 Route::get('/fraud-customers', [DashboardController::class, 'fraudCustomers']);
@@ -21,4 +22,10 @@ Route::get('/cashflow-chart', [DashboardController::class, 'cashflowChart']);
 Route::get('/delivery-table', [DashboardController::class, 'deliveryTable']);
 Route::get('/notifications', [DashboardController::class, 'notifications']);
 
+// ── Shopify Import ─────────────────────────────────────────────────────────
 Route::post('/shopify/import', [ShopifyImportController::class, 'upload']);
+Route::post('/shopify/connect', [ShopifyImportController::class, 'connectShopify']);
+Route::get('/shopify/connection', [ShopifyImportController::class, 'getConnection']);
+
+// ── Orders ─────────────────────────────────────────────────────────────────
+Route::get('/orders', [ShopifyImportController::class, 'orders']);
