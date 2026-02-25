@@ -4,6 +4,8 @@ import CourierPerformance from "../components/ecommerce/CourierPerformance";
 import DeliverySpeedRadar from "../components/ecommerce/DeliverySpeedRadar";
 import DeliveryTable from "../components/ecommerce/DeliveryTable";
 
+import { apiFetch } from "../utils/api";
+
 interface FunnelRow {
   courier: string;
   pending: number;
@@ -26,8 +28,7 @@ export default function Couriers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/courier-funnel")
-      .then(r => r.json())
+    apiFetch("/api/courier-funnel")
       .then(data => { setFunnel(data ?? []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);

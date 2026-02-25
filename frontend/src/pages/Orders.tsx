@@ -115,11 +115,10 @@ export default function Orders() {
     useEffect(() => {
         const codOrderIds = orders.filter(o => o.payment_method === 'COD' && o.status === 'pending').map(o => o.id);
         if (codOrderIds.length === 0) return;
-        fetch('/api/cod-risk/bulk', {
+        apiFetch('/api/cod-risk/bulk', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ids: codOrderIds }),
-        }).then(r => r.json()).then(data => {
+        }).then(data => {
             setCodRisks(prev => ({ ...prev, ...data }));
         }).catch(() => { });
     }, [orders]);
@@ -142,8 +141,7 @@ export default function Orders() {
         formData.append("csv", file);
 
         try {
-            const res = await fetch("/api/shopify/import", { method: "POST", body: formData });
-            const result = await res.json();
+            const result = await apiFetch("/api/shopify/import", { method: "POST", body: formData });
             if (result.success) {
                 setImportMsg({
                     type: "success",
@@ -167,12 +165,10 @@ export default function Orders() {
         setConnecting(true);
         setImportMsg(null);
         try {
-            const res = await fetch("/api/shopify/connect", {
+            const result = await apiFetch("/api/shopify/connect", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ shop_domain: shopDomain, access_token: accessToken }),
             });
-            const result = await res.json();
             if (result.success) {
                 setImportMsg({
                     type: "success",

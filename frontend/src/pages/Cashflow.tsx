@@ -3,13 +3,13 @@ import CashflowInsights from "../components/ecommerce/CashflowInsights";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../utils/api";
 
 export default function Cashflow() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/cashflow-chart')
-      .then(res => res.json())
+    apiFetch('/api/cashflow-chart')
       .then(d => setData(d))
       .catch(err => console.error("Failed to load cashflow chart", err));
   }, []);

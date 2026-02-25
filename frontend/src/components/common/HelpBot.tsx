@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { apiFetch } from "../../utils/api";
 
 interface Action {
     label: string;
@@ -46,12 +47,11 @@ export default function HelpBot() {
 
         if (action.type === "api") {
             try {
-                const res = await fetch(action.payload);
-                const data = await res.json();
+                const data = await apiFetch(action.payload);
 
                 let text = "Everything looks good!";
                 if (action.payload.includes("stats")) {
-                    text = `Here's a quick look at how we're doing:\n\n• **Sales:** ₹${(data.revenue / 1000).toFixed(1)}K\n• **Total Orders:** ${data.total_orders}\n• **RTO Status:** ${data.rto_orders > 0 ? 'Watching closely' : 'All quiet'}\n• **Speed:** Fast (24ms)`;
+                    text = `Here's a quick look at how we're doing:\n\n• **Sales:** ₹${((data.revenue || 0) / 1000).toFixed(1)}K\n• **Total Orders:** ${data.total_orders || 0}\n• **RTO Status:** ${(data.rto_orders || 0) > 0 ? 'Watching closely' : 'All quiet'}\n• **Speed:** Fast (24ms)`;
                 } else if (action.payload.includes("sync")) {
                     text = "I've started syncing with Shiprocket. Your tracking data will be updated in just a moment.";
                 }
@@ -159,9 +159,9 @@ export default function HelpBot() {
                                     )}
 
                                     <div className={`p-5 rounded-3xl text-[13px] md:text-sm leading-relaxed transition-all shadow-xl group ${msg.type === "user"
-                                            ? "bg-gradient-to-br from-indigo-500 to-blue-600 text-white rounded-tr-none border border-white/10"
-                                            : `bg-white dark:bg-[#161b22] text-gray-800 dark:text-white border border-gray-100 dark:border-white/5 rounded-tl-none font-medium ${msg.status === "warning" ? "ring-2 ring-orange-500/20 bg-orange-50/10" : ""
-                                            }`
+                                        ? "bg-gradient-to-br from-indigo-500 to-blue-600 text-white rounded-tr-none border border-white/10"
+                                        : `bg-white dark:bg-[#161b22] text-gray-800 dark:text-white border border-gray-100 dark:border-white/5 rounded-tl-none font-medium ${msg.status === "warning" ? "ring-2 ring-orange-500/20 bg-orange-50/10" : ""
+                                        }`
                                         }`}>
                                         <div className="whitespace-pre-line tracking-tight">
                                             {msg.text.split('**').map((item, i) => (
@@ -178,9 +178,9 @@ export default function HelpBot() {
                                                     key={act.label}
                                                     onClick={() => handleAction(act)}
                                                     className={`px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-wider transition-all shadow-sm active:scale-95 border-b-4 hover:translate-y-[-2px] hover:shadow-lg ${act.variant === "primary" ? "bg-indigo-600 text-white border-indigo-800" :
-                                                            act.variant === "danger" ? "bg-rose-500 text-white border-rose-700" :
-                                                                act.variant === "success" ? "bg-emerald-500 text-white border-emerald-700" :
-                                                                    "bg-white dark:bg-[#1c2128] text-gray-700 dark:text-gray-300 border-gray-200 dark:border-black hover:border-indigo-500"
+                                                        act.variant === "danger" ? "bg-rose-500 text-white border-rose-700" :
+                                                            act.variant === "success" ? "bg-emerald-500 text-white border-emerald-700" :
+                                                                "bg-white dark:bg-[#1c2128] text-gray-700 dark:text-gray-300 border-gray-200 dark:border-black hover:border-indigo-500"
                                                         }`}
                                                 >
                                                     {act.label}

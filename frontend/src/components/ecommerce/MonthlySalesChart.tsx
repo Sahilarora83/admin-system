@@ -4,13 +4,13 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function MonthlySalesChart() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/monthly-sales')
-      .then(res => res.json())
+    apiFetch('/api/monthly-sales')
       .then(d => setData(d))
       .catch(err => console.error("Failed to fetch monthly sales", err));
   }, []);

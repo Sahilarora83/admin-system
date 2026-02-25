@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 interface LineItem {
     name: string;
@@ -65,9 +66,8 @@ export default function DispatchModal({ order, onClose, onSuccess }: Props) {
         setError("");
         setLoading(true);
         try {
-            const res = await fetch("/api/dispatch/initiate", {
+            const data = await apiFetch("/api/dispatch/initiate", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     order_id: order.id,
                     weight: parseFloat(dims.weight),
@@ -76,8 +76,7 @@ export default function DispatchModal({ order, onClose, onSuccess }: Props) {
                     height: parseInt(dims.height),
                 }),
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error ?? "Failed to initiate dispatch");
+            if (data.error) throw new Error(data.error);
 
             setShipmentId(data.shipment_id);
             setCouriers(data.couriers ?? []);
@@ -95,17 +94,15 @@ export default function DispatchModal({ order, onClose, onSuccess }: Props) {
         setConfirming(true);
         setError("");
         try {
-            const res = await fetch("/api/dispatch/confirm", {
+            const data = await apiFetch("/api/dispatch/confirm", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     shipment_id: shipmentId,
                     courier_id: selectedCourier.courier_id,
                     courier_name: selectedCourier.courier_name,
                 }),
             });
-            const data = await res.json();
-            if (!res.ok || !data.success) throw new Error(data.error ?? "Confirm failed");
+            if (data.error || !data.success) throw new Error(data.error ?? "Confirm failed");
 
             setAwb(data.awb_code ?? "");
             setStep("done");

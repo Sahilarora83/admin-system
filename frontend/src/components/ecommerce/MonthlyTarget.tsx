@@ -1,6 +1,7 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
@@ -9,8 +10,7 @@ export default function MonthlyTarget() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/monthly-target')
-      .then(res => res.json())
+    apiFetch('/api/monthly-target')
       .then(d => setData(d))
       .catch(err => console.error("Failed to fetch monthly target", err));
   }, []);

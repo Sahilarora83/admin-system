@@ -1,14 +1,14 @@
 import PageMeta from "../components/common/PageMeta";
 import { useEffect, useState } from "react";
 import Avatar from "../components/ui/avatar/Avatar";
+import { apiFetch } from "../utils/api";
 
 export default function Notifications() {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/notifications')
-            .then(res => res.json())
+        apiFetch('/api/notifications')
             .then(data => {
                 setNotifications(data);
                 setLoading(false);

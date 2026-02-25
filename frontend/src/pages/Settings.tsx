@@ -1,5 +1,6 @@
 import PageMeta from "../components/common/PageMeta";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../utils/api";
 
 export default function Settings() {
   const [profile, setProfile] = useState<any>(null);
@@ -7,8 +8,7 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    fetch('/api/profile')
-      .then(res => res.json())
+    apiFetch('/api/profile')
       .then(data => setProfile(data))
       .catch(err => console.error("Failed to load profile:", err));
   }, []);

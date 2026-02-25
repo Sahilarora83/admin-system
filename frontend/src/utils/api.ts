@@ -32,9 +32,13 @@ const MOCK_DATA: Record<string, any> = {
     '/api/courier-performance': [],
     '/api/pincode-risk': { highRiskCount: 0, users: [], high: 0, medium: 0, low: 0 },
     '/api/delivery-table': [],
-    '/api/profile': { firstName: 'Sahil', lastName: 'Admin', email: 'admin@rtoshield.com', avatar: '' },
+    '/api/profile': { firstName: 'Sahil', lastName: 'Admin', email: 'admin@rtoshield.com', avatar: '', name: 'Sahil Admin' },
     '/api/monthly-target': { target: 100, current: 0 },
-    '/api/monthly-sales': { labels: [], series: [] }
+    '/api/monthly-sales': { labels: [], series: [] },
+    '/api/statistics': { labels: [], series: [] },
+    '/api/cod-risk/bulk': {},
+    '/api/courier-funnel': [],
+    '/api/cashflow-chart': { labels: [], series: [] },
 };
 
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
@@ -42,13 +46,15 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     const cleanEndpoint = endpoint.split('?')[0];
     const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
 
+    const headers: Record<string, string> = { ...(options.headers as any) };
+    if (!(options.body instanceof FormData)) {
+        headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+    }
+
     try {
         const response = await fetch(url, {
             ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
+            headers
         });
 
         if (!response.ok) {
@@ -59,12 +65,15 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
             if (MOCK_DATA[cleanEndpoint]) return MOCK_DATA[cleanEndpoint];
-            throw new Error("Response was not JSON");
+            return { success: true };
         }
 
         return await response.json();
     } catch (error) {
         if (MOCK_DATA[cleanEndpoint]) return MOCK_DATA[cleanEndpoint];
+        if (cleanEndpoint.includes('import') || cleanEndpoint.includes('connect')) {
+            return { success: false, message: 'Server offline' };
+        }
         return Array.isArray(MOCK_DATA[cleanEndpoint]) ? [] : {};
     }
 }

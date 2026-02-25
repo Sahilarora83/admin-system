@@ -1,18 +1,18 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function DeliverySpeedRadar() {
     const [series, setSeries] = useState<any[]>([]);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
-        fetch('/api/delivery-speed')
-            .then(res => res.json())
+        apiFetch('/api/delivery-speed')
             .then(data => {
                 setSeries([
-                    { name: "Current", data: data.current },
-                    { name: "Target", data: data.target }
+                    { name: "Current", data: data.current || [] },
+                    { name: "Target", data: data.target || [] }
                 ]);
             })
             .catch(err => console.error("Failed to load delivery speed", err));

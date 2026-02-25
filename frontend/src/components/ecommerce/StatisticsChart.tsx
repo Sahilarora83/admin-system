@@ -4,14 +4,14 @@ import { ApexOptions } from "apexcharts";
 import flatpickr from "flatpickr";
 import ChartTab from "../common/ChartTab";
 import { CalenderIcon } from "../../icons";
+import { apiFetch } from "../../utils/api";
 
 export default function StatisticsChart() {
   const datePickerRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/statistics')
-      .then(res => res.json())
+    apiFetch('/api/statistics')
       .then(d => setData(d))
       .catch(err => console.error("Failed to fetch statistics", err));
   }, []);

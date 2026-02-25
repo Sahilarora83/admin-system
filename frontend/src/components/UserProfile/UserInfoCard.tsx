@@ -4,14 +4,14 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../utils/api";
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/profile')
-      .then(res => res.json())
+    apiFetch('/api/profile')
       .then(data => setProfile(data))
       .catch(err => console.error(err));
   }, []);
