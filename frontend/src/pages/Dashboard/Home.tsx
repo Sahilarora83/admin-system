@@ -17,7 +17,13 @@ export default function Home() {
 
   useEffect(() => {
     apiFetch('/api/dashboard-stats')
-      .then(() => setBackendStatus("Connected ✓"))
+      .then((data) => {
+        if (data.is_mock) {
+          setBackendStatus("Offline");
+        } else {
+          setBackendStatus("Connected ✓");
+        }
+      })
       .catch(() => setBackendStatus("Offline"));
   }, []);
 
