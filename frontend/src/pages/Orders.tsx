@@ -24,13 +24,7 @@ interface Order {
     line_items: any;
 }
 
-interface OrdersResponse {
-    data: Order[];
-    total: number;
-    page: number;
-    per_page: number;
-    total_pages: number;
-}
+
 
 interface ShopifyConnection {
     connected: boolean;
