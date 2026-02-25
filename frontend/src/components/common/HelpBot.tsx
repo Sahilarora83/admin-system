@@ -48,7 +48,7 @@ export default function HelpBot() {
         if (action.type === "api") {
             try {
                 const res = await fetch(action.payload);
-                const data = await res.json();
+                await res.json();
                 setMessages(prev => [...prev, {
                     id: Date.now(),
                     type: "bot",
@@ -126,8 +126,8 @@ export default function HelpBot() {
                             <div key={msg.id} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
                                 <div className={`max-w-[85%] flex flex-col gap-2 ${msg.type === "user" ? "items-end" : "items-start"}`}>
                                     <div className={`p-3 rounded-2xl text-xs md:text-sm leading-relaxed shadow-sm ${msg.type === "user"
-                                            ? "bg-indigo-600 text-white rounded-tr-none"
-                                            : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-gray-600 rounded-tl-none"
+                                        ? "bg-indigo-600 text-white rounded-tr-none"
+                                        : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-gray-600 rounded-tl-none"
                                         }`}>
                                         {msg.text}
                                     </div>
